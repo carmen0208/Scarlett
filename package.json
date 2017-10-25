@@ -1,0 +1,22 @@
+{
+  "name": "scarlett",
+  "version": "1.0.0",
+  "description": "my personal assistant",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/carmen0208/Scarlett.git"
+  },
+  "author": "Carmen liu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/carmen0208/Scarlett/issues"
+  },
+  "homepage": "https://github.com/carmen0208/Scarlett#readme",
+  "dependencies": {
+    "express": "^4.16.2"
+  }
+}
