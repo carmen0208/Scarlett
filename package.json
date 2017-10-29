@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/carmen0208/Scarlett#readme",
   "dependencies": {
+    "body-parser": "^1.18.2",
     "express": "^4.16.2"
   }
 }
