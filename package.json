@@ -11,6 +11,9 @@
     "type": "git",
     "url": "git+https://github.com/carmen0208/Scarlett.git"
   },
+  "engines": {
+    "node": ">=8.0.0"
+  },
   "author": "Carmen liu",
   "license": "ISC",
   "bugs": {

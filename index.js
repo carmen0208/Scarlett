@@ -2,10 +2,11 @@
 
 const config = require('./config');
 const express = require('express');
-const bodyPraser = require('body-parser);
+const bodyParser = require('body-parser');
 
 var app = express();
 const port = process.env.PORT || 3000;
+
 app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
@@ -13,7 +14,7 @@ app.get('/', (req, res) => {
 });
 
 //facebook webhook
-app.get('webhook', (req, res) => {
+app.get('/webhook', (req, res) => {
   if(req.query['hub.mode'] === "subscribe" && req.query["hub.verify_token"] === config.FB_VERIFY_TOKEN) {
     res.status(200).send(req.query['hub.challenge']);
   } else {
