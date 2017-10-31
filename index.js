@@ -4,6 +4,9 @@ const config = require('./config');
 const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
+const apiai = require('apiai');
+let sendToApiAi = require('./apiai-service/sendToApiAi');
+let fbService = require('./fb-service/fb-service');
 
 const facebook_page_token = process.env.FB_PAGE_ACCESS_TOKEN || config.FB_PAGE_ACCESS_TOKEN;
 
@@ -11,6 +14,9 @@ var app = express();
 const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
+
+const sessionIds = new Map();
+
 
 app.get('/', (req, res) => {
   res.send('Hello World');
@@ -65,9 +71,10 @@ app.post('/webhook', (req, res) => {
 function handleMessage(sender_psid, received_message) {
   let response;
   if(received_message.text) {
-    response = {
-      "text": `You send the message "${received_message.text}". Now send me an image!`
-    }
+    // response = {
+    //   "text": `You send the message "${received_message.text}". Now send me an image!`
+    // }
+    sendToApiAi(sessionIds, handleApiAiResponse, sender_psid, received_message.text );
   } else if (received_message.attachments) {
     // Gets the URL of the message attachment
     let attachment_url = received_message.attachments[0].payload.url;
@@ -98,7 +105,7 @@ function handleMessage(sender_psid, received_message) {
     }
   }
   //Sends the response message
-  callSendAPI(sender_psid, response);
+  // callSendApi(sender_psid, response);
 }
 
 function handlePostback(sender_psid, received_postback) {
@@ -112,30 +119,13 @@ function handlePostback(sender_psid, received_postback) {
     response = { "text": "Oops, try sending another image." }
   }
   // Send the message to acknowledge the postback
-  callSendAPI(sender_psid, response);
+  fbService.sendTextMessage(sender_psid, response);
+  // fbService.callSendApi(sender_psid, response);
 }
 
-function callSendAPI(sender_psid, response) {
-  // Construct the message body
-  let request_body = {
-    "recipient": {
-      "id": sender_psid
-    },
-    "message": response
-  }
-  console.log(request_body);
-  request({
-    "uri": "https://graph.facebook.com/v2.6/me/messages",
-    "qs": { "access_token": facebook_page_token },
-    "method": 'POST',
-    "json": request_body
-  }, (err, res, body) => {
-    if (!err) {
-      console.log('message sent!')
-    } else {
-      console.error("Unable to send message:" + err);
-    }
-  });
+function handleApiAiResponse(sender, response) {
+  let responseText = response.result.fulfillment.speech;
+  fbService.sendTextMessage(sender, responseText);
 }
 app.listen(port, ()=> {
   console.log(`Start up at port ${port}`);
